@@ -5,7 +5,6 @@
  */
 
 import { definePluginSettings } from "@api/Settings";
-import { makeRange, SettingSliderComponent } from "@components/PluginSettings/components";
 import { useAwaiter } from "@utils/react";
 import { OptionType } from "@utils/types";
 import { Button, showToast, Text, Toasts } from "@webpack/common";
@@ -15,11 +14,6 @@ import { Lyrics } from "./components/lyrics";
 import { useLyrics } from "./components/util";
 import languages from "./providers/translator/languages";
 import { Provider } from "./providers/types";
-
-const sliderOptions = {
-    markers: makeRange(-2500, 2500, 250),
-    stickToMarkers: true,
-};
 
 function Details() {
     const { lyricsInfo } = useLyrics();
@@ -88,29 +82,15 @@ const settings = definePluginSettings({
         default: true,
     },
     LyricDelay: {
-        description: "",
-        type: OptionType.SLIDER,
+        description: "Offset for lyric timing (in milliseconds)",
+        type: OptionType.NUMBER,
         default: 0,
-        hidden: true,
-        ...sliderOptions
+        hidden: false,
     },
     Display: {
-        description: "",
+        description: "Lyrics preview",
         type: OptionType.COMPONENT,
-        component: () => (
-            <>
-                <SettingSliderComponent
-                    option={{ ...sliderOptions } as any}
-                    onChange={v => {
-                        settings.store.LyricDelay = v;
-                    }}
-                    pluginSettings={Vencord.Settings.plugins.SpotifyLyrics}
-                    id={"LyricDelay"}
-                    onError={() => { }}
-                />
-                <Lyrics />
-            </>
-        )
+        component: () => <Lyrics />
     },
     Details: {
         description: "",
