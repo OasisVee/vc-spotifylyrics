@@ -1,9 +1,3 @@
-/*
- * Vencord, a Discord client mod
- * Copyright (c) 2024 Vendicated and contributors
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
-
 import { copyWithToast } from "@utils/misc";
 import { findComponentByCodeLazy } from "@webpack";
 import { Slider, FluxDispatcher, Menu } from "@webpack/common";
@@ -71,6 +65,28 @@ function LyricOffsetSlider() {
     );
 }
 
+function LyricDelayMenuItem() {
+    const [delay, setDelay] = useState(settings.store.LyricDelay);
+
+    const handleChange = (value: number) => {
+        setDelay(value);
+        settings.store.LyricDelay = value;
+    };
+
+    return (
+        <Menu.MenuItem
+            id="change-lyric-delay"
+            label={`Lyric Delay: ${delay}ms`}
+            action={() => {
+                const newDelay = prompt('Enter new lyric delay in ms:', delay.toString());
+                if (newDelay !== null) {
+                    handleChange(parseInt(newDelay, 10));
+                }
+            }}
+        />
+    );
+}
+
 export function LyricsContextMenu() {
     const { lyricsInfo, currLrcIndex } = useLyrics();
 
@@ -113,6 +129,8 @@ export function LyricsContextMenu() {
                 label="Lyric Offset"
                 render={() => <LyricOffsetSlider />}
             />
+            <Menu.MenuSeparator />
+            <LyricDelayMenuItem />
         </Menu.Menu>
     );
 }
