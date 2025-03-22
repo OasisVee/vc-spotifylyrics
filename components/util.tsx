@@ -51,14 +51,13 @@ export function useLyrics() {
         }
     }, [currentLyrics]);
 
-
     useEffect(() => {
         if (currentLyrics && position) {
             const [currentIndex, nextLyric] = calculateIndexes(currentLyrics, position, LyricDelay);
             setCurrLrcIndex(currentIndex);
             setNextLyric(nextLyric);
         }
-    }, [currentLyrics, position]);
+    }, [currentLyrics, position, LyricDelay]);
 
     useEffect(() => {
         if (currLrcIndex !== null) {
