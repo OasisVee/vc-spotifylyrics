@@ -6,10 +6,12 @@
 
 import { copyWithToast } from "@utils/misc";
 import { findComponentByCodeLazy } from "@webpack";
-import { FluxDispatcher, Menu } from "@webpack/common";
+import { Slider, FluxDispatcher, Menu } from "@webpack/common";
+import { React, useState } from "@webpack/common";
 
 import { Provider } from "../providers/types";
 import { useLyrics } from "./util";
+import settings from "../settings";
 
 const CopyIcon = findComponentByCodeLazy(" 1-.5.5H10a6");
 
@@ -32,6 +34,40 @@ function ProviderMenuItem(toProvider: Provider, currentProvider?: Provider) {
                 }}
             />
         )
+    );
+}
+
+function LyricOffsetSlider() {
+    const [delay, setDelay] = useState(settings.store.LyricDelay);
+    
+    const handleChange = (value: number) => {
+        setDelay(value);
+        settings.store.LyricDelay = value;
+    };
+
+    return (
+        <div style={{ padding: "8px 12px" }}>
+            <div style={{ marginBottom: "6px", display: "flex", justifyContent: "space-between" }}>
+                <span>Lyric Offset: {delay}ms</span>
+                {delay !== 0 && (
+                    <span 
+                        style={{ cursor: "pointer", fontSize: "12px", color: "var(--interactive-normal)" }}
+                        onClick={() => handleChange(0)}
+                    >
+                        Reset
+                    </span>
+                )}
+            </div>
+            <Slider
+                initialValue={delay}
+                minValue={-2500}
+                maxValue={2500}
+                markers={[-2500, -2000, -1500, -1000, -500, 0, 500, 1000, 1500, 2000, 2500]}
+                stickToMarkers={true}
+                onValueChange={handleChange}
+                onValueRender={(v) => `${v}ms`}
+            />
+        </div>
     );
 }
 
@@ -71,6 +107,12 @@ export function LyricsContextMenu() {
                     ProviderMenuItem(provider, lyricsInfo?.useLyric)
                 )}
             </Menu.MenuItem>
+            <Menu.MenuSeparator />
+            <Menu.MenuItem
+                id="lyric-offset"
+                label="Lyric Offset"
+                render={() => <LyricOffsetSlider />}
+            />
         </Menu.Menu>
     );
 }
